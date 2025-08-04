@@ -5,6 +5,9 @@ import { config } from '../../config.js';
 
 let db = null;
 
+// Export db for use in other modules
+export { db };
+
 // Ensure data directory exists
 export function ensureDataDirectoryExists() {
   const dataDir = './data';
@@ -35,6 +38,9 @@ export async function initDatabase() {
       filename: './data/mouin_almojtahidin.db',
       driver: sqlite3.Database
     });
+    
+    // Re-export db after initialization
+    export { db };
 
     // Enable foreign keys
     await db.exec('PRAGMA foreign_keys = ON');
@@ -144,14 +150,68 @@ async function createTables() {
       )
     `);
 
-    // Custom reminders table
+        // Custom reminders table
     await db.exec(`
       CREATE TABLE IF NOT EXISTS custom_reminders (
         reminder_id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
-        reminder_datetime DATETIME NOT NULL,
+        reminder_datetime TEXT NOT NULL,
         message TEXT NOT NULL,
         is_sent BOOLEAN DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      )
+    `);
+
+    // Tasks table for enhanced task management
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS tasks (
+        task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        priority TEXT DEFAULT 'medium' CHECK (priority IN ('high', 'medium', 'low')),
+        category TEXT DEFAULT 'general',
+        due_date TEXT,
+        tags TEXT, -- JSON array of tags
+        recurring TEXT, -- JSON object for recurring tasks
+        estimated_time INTEGER, -- in minutes
+        status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'overdue', 'cancelled')),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        completed_at DATETIME,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      )
+    `);
+
+    // User preferences table for adaptive features
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS user_preferences (
+        user_id INTEGER PRIMARY KEY,
+        preferred_reminder_time TEXT DEFAULT '09:00',
+        timezone TEXT DEFAULT 'Asia/Riyadh',
+        language TEXT DEFAULT 'ar',
+        notification_frequency TEXT DEFAULT 'daily',
+        task_categories TEXT, -- JSON array of preferred categories
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      )
+    `);
+
+    // Task completion history for analytics
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS task_history (
+        history_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        task_id INTEGER NOT NULL,
+        action TEXT NOT NULL, -- 'created', 'completed', 'updated', 'deleted'
+        old_status TEXT,
+        new_status TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (task_id) REFERENCES tasks(task_id)
+      )
+    `);
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(user_id)
       )

@@ -30,6 +30,15 @@ import { handleExport } from './bot/commands/export.js';
 import { handleFeedback, handleViewFeedback } from './bot/commands/feedback.js';
 import { handleSettings } from './bot/commands/settings.js';
 
+// Import new smart task management commands
+import { 
+  handleSmartTask, 
+  handleListTasks, 
+  handleCompleteTask, 
+  handleTaskStats, 
+  handleSuggestions 
+} from './bot/commands/smarttask.js';
+
 // Validate environment variables
 function validateConfig() {
   if (!config.botToken) {
@@ -156,6 +165,13 @@ function registerCommands(bot) {
   bot.command('feedback', handleFeedback);
   bot.command('settings', handleSettings);
   
+  // Smart task management commands
+  bot.command('addtask', handleSmartTask);
+  bot.command('tasks', handleListTasks);
+  bot.command('complete', handleCompleteTask);
+  bot.command('taskstats', handleTaskStats);
+  bot.command('suggestions', handleSuggestions);
+  
   // Admin commands (verification + admin privileges required)
   bot.command('stats', requireAdmin, handleStats);
   bot.command('publish', requireAdmin, handlePublish);
@@ -181,7 +197,8 @@ function registerCommands(bot) {
     const knownCommands = [
       '/start', '/verify', '/help', '/faq', '/profile', '/courses', 
       '/assignments', '/attendance', '/reminders', '/submit', '/addreminder',
-      '/feedback', '/settings', '/stats', '/publish', '/addassignment', 
+      '/feedback', '/settings', '/addtask', '/tasks', '/complete', '/taskstats', '/suggestions',
+      '/stats', '/publish', '/addassignment', 
       '/updateassignment', '/deleteassignment', '/deletecourse', '/export', '/viewfeedback'
     ];
     
@@ -204,6 +221,12 @@ function registerCommands(bot) {
         `• \`/feedback\` \\- إرسال تغذية راجعة\\n` +
         `• \`/settings\` \\- إعدادات المستخدم\\n` +
         `• \`/faq\` \\- الأسئلة الشائعة\\n\\n` +
+        `📋 *إدارة المهام الذكية:*\\n` +
+        `• \`/addtask\` \\- إضافة مهمة جديدة \\(لغة طبيعية\\)\\n` +
+        `• \`/tasks\` \\- عرض قائمة المهام\\n` +
+        `• \`/complete\` \\- إكمال مهمة\\n` +
+        `• \`/taskstats\` \\- إحصائيات المهام\\n` +
+        `• \`/suggestions\` \\- اقتراحات ذكية\\n\\n` +
         `⚙️ *أوامر المدير:*\\n` +
         `• \`/stats\` \\- عرض الإحصائيات\\n` +
         `• \`/publish\` \\- نشر إعلان\\n` +

@@ -1,6 +1,7 @@
 import { isUserVerified, isUserAdmin } from '../utils/database.js';
 import { config } from '../../config.js';
 import { escapeMarkdownV2 } from '../utils/escapeMarkdownV2.js';
+import { ResponseFormatter } from '../utils/responseFormatter.js';
 
 export async function handleHelp(ctx) {
   try {
@@ -27,6 +28,13 @@ export async function handleHelp(ctx) {
       message += `• 💬 /feedback رسالتك - ${escapeMarkdownV2('إرسال تغذية راجعة')}\n`;
       message += `• ⚙️ /settings - ${escapeMarkdownV2('إعدادات المستخدم')}\n`;
       message += `• ❓ /faq - ${escapeMarkdownV2('الأسئلة الشائعة')}\n\n`;
+      
+      message += `📋 *${escapeMarkdownV2('إدارة المهام الذكية:')}*\n`;
+      message += `• 🎯 /addtask - ${escapeMarkdownV2('إضافة مهمة جديدة (لغة طبيعية)')}\n`;
+      message += `• 📋 /tasks - ${escapeMarkdownV2('عرض قائمة المهام')}\n`;
+      message += `• ✅ /complete - ${escapeMarkdownV2('إكمال مهمة')}\n`;
+      message += `• 📊 /taskstats - ${escapeMarkdownV2('إحصائيات المهام')}\n`;
+      message += `• 💡 /suggestions - ${escapeMarkdownV2('اقتراحات ذكية')}\n\n`;
     } else {
       message += `🔒 *${escapeMarkdownV2('يجب التفعيل أولاً (استخدم /verify):')}*\n\n`;
     }
@@ -40,11 +48,17 @@ export async function handleHelp(ctx) {
       message += `• 📝 إدارة الواجبات: /addassignment, /updateassignment, /deleteassignment\n\n`;
     }
     message += '━━━━━━━━━━━━━━━━━━━━\n';
-    message += `💡 *${escapeMarkdownV2('نصائح:')}*\n`;
+    message += `💡 *${escapeMarkdownV2('نصائح المهام الذكية:')}*\n`;
+    message += `- ${escapeMarkdownV2('استخدم اللغة الطبيعية: /addtask اجتماع غداً')}\n`;
+    message += `- ${escapeMarkdownV2('أضف علامات: /addtask #work #urgent')}\n`;
+    message += `- ${escapeMarkdownV2('حدد الأولوية: /addtask مهم call client')}\n`;
+    message += `- ${escapeMarkdownV2('أضف وصف: /addtask study math by review chapter 5')}\n`;
+    message += `- ${escapeMarkdownV2('تصفية المهام: /tasks high, /tasks today')}\n\n`;
+    message += `💡 *${escapeMarkdownV2('نصائح عامة:')}*\n`;
     message += `- ${escapeMarkdownV2('احفظ كود التفعيل بأمان')}\n`;
     message += `- ${escapeMarkdownV2('تابع مواعيد الدروس والواجبات')}\n`;
     message += `- ${escapeMarkdownV2('تواصل مع')} ${escapeMarkdownV2(config.admin.supportChannel)} ${escapeMarkdownV2('للدعم')}\n\n`;
-    message += `🤖 *${escapeMarkdownV2('بوت معين المجتهدين - v2.0.0')}*\n`;
+    message += `🤖 *${escapeMarkdownV2('بوت معين المجتهدين - v2.1.0')}*\n`;
     message += `📅 *${escapeMarkdownV2('آخر تحديث:')}* ${escapeMarkdownV2(new Date().toLocaleDateString('ar-SA'))}`;
 
     await ctx.reply(message, {
