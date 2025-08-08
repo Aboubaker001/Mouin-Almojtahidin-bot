@@ -1,27 +1,40 @@
 {
   "name": "mouin-almojtahidin-bot",
-  "version": "2.0.0",
-  "main": "index.js",
+  "version": "2.1.0",
+  "description": "Educational Telegram bot for course management, attendance tracking, and assignments",
+  "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js",
-    "test": "node test/verify.test.js",
-    "build": "echo 'No build step required for Node.js bot'",
-    "deploy": "bash deploy.sh"
+    "start": "node src/app.js",
+    "dev": "node --env-file=.env.local --watch src/app.js",
+    "build": "echo 'No build step required for Node.js application'",
+    "test": "node --test src/tests/*.test.js",
+    "test:watch": "node --test --watch src/tests/*.test.js",
+    "setup:dev": "node scripts/setup-dev.js",
+    "setup:test-data": "node scripts/setup-test-data.js",
+    "db:migrate": "node scripts/migrate.js",
+    "lint": "echo 'Add ESLint configuration if needed'",
+    "health": "node scripts/health-check.js"
   },
   "dependencies": {
-    "telegraf": "^4.12.0",
-    "sqlite3": "^5.1.6",
+    "telegraf": "^4.16.3",
+    "pg": "^8.11.3",
+    "sqlite3": "^5.1.7",
+    "sqlite": "^5.1.1",
     "node-schedule": "^2.1.1",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "winston": "^3.13.0",
+    "joi": "^17.12.3",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
-    "sqlite": "^5.1.1"
+    "nodemon": "^3.1.0"
   },
   "engines": {
-    "node": ">=22.15.0",
+    "node": ">=20.11.0",
     "npm": ">=10.0.0"
   },
   "keywords": [
@@ -30,8 +43,23 @@
     "education",
     "course-management",
     "attendance",
-    "assignments"
+    "assignments",
+    "railway",
+    "postgresql",
+    "nodejs"
   ],
   "author": "Mouin Almojtahidin Team",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/mouin-almojtahidin-bot"
+  },
+  "railway": {
+    "build": {
+      "command": "npm ci"
+    },
+    "start": {
+      "command": "npm start"
+    }
+  }
 }

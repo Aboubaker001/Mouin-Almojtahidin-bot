@@ -1,311 +1,355 @@
-# 🤖 Mouin Almojtahidin Bot
+# 🤖 Mouin Almojtahidin Educational Bot
 
-A comprehensive Telegram bot for educational course management, built with **Telegraf**, **SQLite**, and **Node.js**. The bot focuses on robust reminder functionality with admin-controlled features for managing courses, assignments, and user interactions.
+A production-ready Telegram bot built with Node.js and Telegraf for educational course management, attendance tracking, and assignment handling. Optimized for **Railway deployment** with PostgreSQL support and local SQLite development.
 
 ## ✨ Features
 
-### 🎯 Core Functionality
-- **Reminder System**: Advanced reminder management with group and DM notifications
-- **User Management**: Verification system with admin-controlled access
-- **Course Management**: Complete course and lesson administration
-- **Assignment System**: Create, manage, and track assignments with automatic grading
-- **Attendance Tracking**: Monitor student participation in lessons
+- 📚 **Course Management** - Create, update, and manage educational courses
+- 👥 **User Authentication** - Secure user verification system  
+- 📊 **Attendance Tracking** - Digital attendance for lessons
+- 📝 **Assignment System** - Create, submit, and grade assignments
+- 🔔 **Smart Reminders** - Automated lesson and deadline notifications
+- 👨‍💼 **Admin Dashboard** - Comprehensive admin controls and statistics
+- 🌐 **Multi-Environment** - Development (polling) and production (webhook) modes
+- 🗄️ **Database Flexibility** - SQLite for development, PostgreSQL for production
+- 📈 **Production Ready** - Logging, monitoring, and health checks
 
-### 📱 User Commands
-- `/start` - Welcome message with interactive buttons
-- `/verify <code>` - Account verification with admin-provided codes
-- `/help` - Comprehensive command guide
-- `/faq` - Frequently asked questions
-- `/profile` - View personal profile and statistics
-- `/courses` - List available courses and lessons
-- `/assignments` - View active assignments
-- `/attendance <lesson_id>` - Mark attendance for lessons
-- `/submit <assignment_id> <answer>` - Submit assignment answers
-- `/reminders` - Toggle reminder notifications
-- `/addreminder <datetime> <message>` - Create custom reminders
-- `/listreminders` - View active personal reminders
-- `/deletereminder <id>` - Delete specific reminders
-- `/upcominglessons` - Show lessons scheduled for next 7 days
-- `/feedback <message>` - Send feedback to administrators
-- `/reportbug <description>` - Report technical issues
-- `/settings` - Manage user preferences (language, notifications)
+## 🏗️ Architecture
 
-### 👨‍💼 Admin Commands
-- `/stats` - View bot statistics and analytics
-- `/publish <message>` - Send announcements to all verified users
-- `/broadcast <group|users> <message>` - Mass messaging system
-- `/addassignment <course_id> <title> <question> <answer> <deadline>` - Create assignments
-- `/updateassignment <id> <field> <value>` - Modify existing assignments
-- `/deleteassignment <id>` - Remove assignments (with dependency handling)
-- `/deletecourse <id>` - Remove courses
-- `/export <type>` - Export data (attendance/assignments)
-- `/viewfeedback` - Review user feedback
+```
+src/
+├── app.js                    # Main application entry point
+├── config/
+│   └── environment.js        # Environment configuration with validation
+├── database/
+│   ├── connection.js         # Database abstraction layer
+│   ├── adapters/
+│   │   ├── sqlite.js         # SQLite adapter (development)
+│   │   └── postgres.js       # PostgreSQL adapter (production)
+│   └── migrations/
+│       └── create-tables.js  # Database schema migrations
+├── middlewares/
+│   └── index.js              # Rate limiting, auth, error handling
+├── commands/
+│   └── index.js              # Bot command handlers
+├── services/
+│   └── scheduler.js          # Reminder and scheduling service
+├── utils/
+│   └── logger.js             # Winston-based logging system
+└── tests/
+    └── database.test.js      # Unit tests (Node.js test runner)
+```
 
-### 🔧 Technical Features
-- **MarkdownV2 Support**: Proper escaping of all reserved characters
-- **Database Integrity**: Foreign key constraints with CASCADE handling
-- **Robust Launch**: Exponential backoff retry with webhook fallback
-- **Input Validation**: Comprehensive security measures
-- **Rate Limiting**: Built-in protection against spam
-- **Localization**: Arabic/English language support
-- **Error Reporting**: Comprehensive logging and bug tracking
+## 🚀 Quick Start
 
-## 🚀 Installation & Setup
+### 1. Development Setup
 
-### Prerequisites
-- **Node.js**: Version 22.15.0 or higher
-- **npm**: Version 10.0.0 or higher
-- **Telegram Bot Token**: Obtain from [@BotFather](https://t.me/BotFather)
-
-### 1. Clone Repository
 ```bash
-git clone <repository-url>
+# Clone the repository
+git clone <your-repo-url>
 cd mouin-almojtahidin-bot
-```
 
-### 2. Install Dependencies
-```bash
+# Install dependencies
 npm install
+
+# Setup development environment
+npm run setup:dev
+
+# Update .env.local with your bot token
+# Get your bot token from @BotFather on Telegram
 ```
 
-### 3. Environment Configuration
-Create a `.env` file in the project root:
+### 2. Configuration
+
+Create `.env.local` for development:
 
 ```env
-# Bot Configuration
-BOT_TOKEN=your_telegram_bot_token_here
-
-# Admin Configuration
-ADMIN_USER_IDS=123456789,987654321  # Comma-separated admin user IDs
-ADMIN_CHAT_ID=-1001234567890        # Main group chat ID (optional)
-
-# Verification
-VERIFICATION_CODE=your_verification_code_here
-
-# Support
-SUPPORT_CHANNEL=@your_support_channel
-
-# Webhook (optional - for production)
-WEBHOOK_URL=https://your-domain.com/bot
-PORT=3000
-
-# Database
-DATABASE_PATH=./data/mouin_almojtahidin.db
+NODE_ENV=development
+BOT_TOKEN=your_bot_token_from_botfather
+ACTIVATION_CODE=free_palestine1447
+ADMIN_USER_IDS=your_telegram_user_id
 ```
 
-### 4. Database Setup
-The bot automatically creates the SQLite database and tables on first run:
+### 3. Run Locally
 
 ```bash
-npm run start
-```
-
-### 5. Development
-For development with auto-restart:
-
-```bash
+# Development mode (with auto-reload)
 npm run dev
+
+# Production mode
+npm start
+
+# Run tests
+npm test
+
+# Health check
+npm run health
 ```
 
-## 🔧 Configuration
+## 🌐 Railway Deployment
 
-### Admin Setup
-1. Get your Telegram user ID by messaging [@userinfobot](https://t.me/userinfobot)
-2. Add your user ID to `ADMIN_USER_IDS` in the `.env` file
-3. Restart the bot
+### Prerequisites
 
-### Group Integration
-1. Add the bot to your main group
-2. Make the bot an administrator
-3. Get the group chat ID using `/getChatId` command
-4. Add the chat ID to `ADMIN_CHAT_ID` in the `.env` file
+1. Create a [Railway](https://railway.app) account
+2. Install Railway CLI: `npm install -g @railway/cli`
+3. Get your bot token from [@BotFather](https://t.me/botfather)
 
-### Verification System
-1. Set a secure verification code in `VERIFICATION_CODE`
-2. Share this code with students for account activation
-3. Only verified users can access most bot features
+### Deploy to Railway
 
-## 📚 Database Schema
+1. **Create Railway Project**
+   ```bash
+   railway login
+   railway init
+   ```
 
-### Tables
-- **users**: User profiles and preferences
-- **courses**: Course information
-- **lessons**: Individual lesson details
-- **assignments**: Assignment data with deadlines
-- **submissions**: Student assignment submissions
-- **attendance**: Lesson attendance records
-- **custom_reminders**: User-created reminders
-- **feedback**: User feedback and admin responses
-- **bugs**: Bug reports and resolution tracking
-- **announcements**: Published announcements
+2. **Add PostgreSQL Database**
+   ```bash
+   railway add postgresql
+   ```
 
-### Key Features
-- Foreign key constraints with CASCADE delete
-- Automatic timestamp tracking
-- User language preferences
-- Reminder status tracking
+3. **Set Environment Variables**
+   ```bash
+   railway variables set BOT_TOKEN=your_bot_token_here
+   railway variables set WEBHOOK_SECRET=your_secure_random_string
+   railway variables set ACTIVATION_CODE=free_palestine1447
+   railway variables set ADMIN_USER_IDS=123456789,987654321
+   railway variables set NODE_ENV=production
+   railway variables set DB_TYPE=postgresql
+   ```
 
-## 🚀 Deployment
+4. **Deploy**
+   ```bash
+   railway deploy
+   ```
 
-### Option 1: Traditional Server
-```bash
-# Install PM2 for process management
-npm install -g pm2
+5. **Set Webhook URL**
+   After deployment, get your Railway app URL and update:
+   ```bash
+   railway variables set WEBHOOK_URL=https://your-app.railway.app
+   ```
 
-# Start the bot
-pm2 start index.js --name mouin-bot
+### Environment Variables for Railway
 
-# Save PM2 configuration
-pm2 save
-pm2 startup
-```
-
-### Option 2: Docker
-```dockerfile
-# Build image
-docker build -t mouin-bot .
-
-# Run container
-docker run -d --name mouin-bot \
-  --env-file .env \
-  -v $(pwd)/data:/app/data \
-  -p 3000:3000 \
-  mouin-bot
-```
-
-### Option 3: Heroku
-1. Create a new Heroku app
-2. Set environment variables in Heroku dashboard
-3. Deploy using Git:
-```bash
-git add .
-git commit -m "Deploy to Heroku"
-git push heroku main
-```
-
-### Webhook Mode (Production)
-For production deployment, use webhook mode:
-
-1. Set `WEBHOOK_URL` in environment variables
-2. The bot will automatically fall back to webhook if polling fails
-3. Ensure your server is accessible via HTTPS
-
-## 🔒 Security Features
-
-### Input Validation
-- All user inputs are sanitized and validated
-- SQL injection prevention
-- Command argument validation
-- Rate limiting protection
-
-### Access Control
-- Admin-only commands with verification
-- User verification system
-- Secure database operations with transactions
-
-### Error Handling
-- Comprehensive error logging
-- Graceful degradation
-- User-friendly error messages
-
-## 📊 Monitoring & Maintenance
-
-### Logs
-- **Combined logs**: `./data/combined.log`
-- **Error logs**: `./data/error.log`
-- **Database**: `./data/mouin_almojtahidin.db`
-
-### Health Checks
-- `/health` endpoint (webhook mode)
-- Bot status monitoring
-- Database connection verification
-
-### Backup
-Regular database backups recommended:
-```bash
-# Backup database
-cp ./data/mouin_almojtahidin.db ./backups/backup-$(date +%Y%m%d).db
-
-# Backup logs
-tar -czf ./backups/logs-$(date +%Y%m%d).tar.gz ./data/*.log
-```
+| Variable | Required | Description | Example |
+|----------|----------|-------------|---------|
+| `BOT_TOKEN` | ✅ | Telegram bot token | `123456:ABC-DEF...` |
+| `WEBHOOK_URL` | ✅ | Railway app URL | `https://your-app.railway.app` |
+| `WEBHOOK_SECRET` | ✅ | Webhook security token | `your-random-secret` |
+| `ACTIVATION_CODE` | ✅ | User activation code | `free_palestine1447` |
+| `ADMIN_USER_IDS` | ✅ | Comma-separated admin IDs | `123,456,789` |
+| `SUPPORT_CHANNEL` | ⚪ | Support channel | `@YourChannel` |
+| `DATABASE_URL` | 🔄 | Auto-set by Railway | PostgreSQL connection |
+| `NODE_ENV` | 🔄 | Auto-set to production | `production` |
 
 ## 🛠️ Development
 
-### Project Structure
+### VS Code Setup
+
+The project includes optimized VS Code configuration:
+
+- **Debug Configurations**: Press F5 to start debugging
+- **Extensions Support**: ESLint, Prettier ready
+- **Task Runner**: Integrated npm scripts
+- **File Nesting**: Organized file explorer
+
+### Available Scripts
+
+```bash
+npm run dev              # Development with auto-reload
+npm start                # Production mode
+npm test                 # Run unit tests
+npm run test:watch       # Watch mode testing
+npm run setup:dev        # Initialize development environment
+npm run setup:test-data  # Populate database with test data
+npm run health           # Application health check
+npm run db:migrate       # Run database migrations
 ```
-mouin-almojtahidin-bot/
-├── bot/
-│   ├── commands/          # Command handlers
-│   ├── middlewares/       # Bot middlewares
-│   └── utils/            # Utility functions
-├── data/                 # Database and logs
-├── test/                # Test files
-├── config.js            # Configuration
-├── index.js             # Main bot file
-└── package.json         # Dependencies
+
+### Testing
+
+Built-in Node.js test runner (no external dependencies):
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test file
+node --test src/tests/database.test.js
+
+# Watch mode
+npm run test:watch
 ```
 
 ### Adding New Commands
-1. Create command handler in `bot/commands/`
-2. Import and register in `index.js`
-3. Add to help command documentation
-4. Update README
 
-### Testing
-```bash
-npm test
+1. Create command handler in `src/commands/`
+2. Add to `src/commands/index.js`
+3. Add middleware if needed (auth, rate limiting)
+4. Write tests in `src/tests/`
+
+Example:
+```javascript
+// src/commands/my-command.js
+export async function handleMyCommand(ctx) {
+  await ctx.reply('Hello from my command!');
+}
+
+// Add to src/commands/index.js
+bot.command('mycommand', handleMyCommand);
 ```
 
-## 🐛 Troubleshooting
+## 📊 Database Schema
+
+The bot supports both SQLite (development) and PostgreSQL (production):
+
+### Core Tables
+
+- `users` - User accounts and verification status
+- `courses` - Educational courses catalog  
+- `lessons` - Individual lesson scheduling
+- `assignments` - Homework and tasks
+- `attendance` - Lesson attendance tracking
+- `submissions` - Assignment submissions
+- `announcements` - System announcements
+- `feedback` - User feedback system
+
+### Migration System
+
+Automatic database migrations ensure schema consistency:
+
+```bash
+# Run migrations manually
+npm run db:migrate
+
+# Migrations run automatically on startup
+```
+
+## 🔐 Security Features
+
+- **Environment Validation** - Joi schema validation for all config
+- **Rate Limiting** - Per-user request limits (30/min, 100/hour)
+- **Admin Authorization** - Role-based command access
+- **Webhook Secrets** - Secure webhook verification
+- **Input Sanitization** - SQL injection prevention
+- **Error Handling** - No sensitive data in error messages
+
+## 📈 Monitoring & Logging
+
+### Health Check Endpoint
+
+```bash
+# Check application health
+curl https://your-app.railway.app/health
+
+# Local health check
+npm run health
+```
+
+### Logging System
+
+- **Structured Logging** - JSON format with Winston
+- **Log Rotation** - Automatic file rotation (10MB, 5 files)
+- **Environment Aware** - Console (dev) + Files (production)
+- **Error Tracking** - Separate error log files
+
+Log files location:
+- `logs/app.log` - Application logs
+- `logs/error.log` - Error logs only
+- `logs/exceptions.log` - Uncaught exceptions
+
+## 🚦 Commands
+
+### Public Commands
+- `/start` - Register and welcome new users
+- `/help` - Show available commands
+- `/verify <code>` - Activate account with code
+
+### User Commands  
+- `/profile` - Show user profile and stats
+- `/courses` - List available courses
+- `/assignments` - Show assignments and deadlines
+- `/attendance <lesson_id>` - Record lesson attendance
+- `/reminders` - Manage notification preferences
+
+### Admin Commands
+- `/stats` - Bot usage statistics
+- `/broadcast <message>` - Send message to all users
+- `/addcourse <name> <description>` - Create new course
+- `/stats` - View detailed analytics
+
+## 🔧 Troubleshooting
 
 ### Common Issues
 
 **Bot not responding:**
-- Check BOT_TOKEN is correct
-- Verify bot is not blocked
-- Check network connectivity
+```bash
+# Check bot token
+npm run health
 
-**Database errors:**
-- Ensure write permissions to `./data/` directory
-- Check disk space
-- Verify SQLite installation
+# Verify webhook (production)
+curl -X POST https://api.telegram.org/bot<TOKEN>/getWebhookInfo
+```
 
-**Webhook issues:**
-- Ensure HTTPS is properly configured
-- Check webhook URL accessibility
-- Verify port configuration
+**Database connection failed:**
+```bash
+# Check database health
+npm run health
 
-**Path issues with spaces:**
-- Move project to path without spaces
-- Use quotes around paths in scripts
+# Verify environment variables
+railway variables
+```
 
-### Getting Help
-- Check logs in `./data/error.log`
-- Use `/reportbug` command for technical issues
-- Contact support channel specified in configuration
+**Deployment issues:**
+```bash
+# Check Railway logs
+railway logs
 
-## 📄 License
+# Verify build
+railway status
+```
 
-MIT License - see LICENSE file for details.
+### Debug Mode
+
+Enable detailed logging:
+```bash
+# Development
+LOG_LEVEL=debug npm run dev
+
+# Railway
+railway variables set LOG_LEVEL=debug
+```
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Run tests: `npm test`
+4. Commit changes: `git commit -m 'Add amazing feature'`
+5. Push to branch: `git push origin feature/amazing-feature`
+6. Open Pull Request
+
+### Development Guidelines
+
+- Use Node.js 20+ features
+- Follow ESM imports (no CommonJS)
+- Write tests for new features
+- Use structured logging
+- Validate environment variables
+- Handle errors gracefully
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📞 Support
 
-For support and questions:
-- Use the `/feedback` command in the bot
-- Report bugs with `/reportbug`
-- Contact the support channel configured in your bot
+- **Documentation**: This README and inline code comments
+- **Issues**: GitHub Issues for bugs and feature requests
+- **Telegram**: Contact support channel configured in bot
+- **Health Monitoring**: `/health` endpoint for status checks
 
 ---
 
-**Version**: 2.0.0  
-**Last Updated**: December 2024  
-**Maintained by**: Mouin Almojtahidin Team
+**Built with ❤️ for educational institutions**
+
+Compatible with Node.js 20+, optimized for Railway deployment, production-ready with comprehensive logging and monitoring.
